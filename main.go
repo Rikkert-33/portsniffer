@@ -6,17 +6,19 @@ import (
 	"time"
 )
 
-func main() {
-	target := "localhost" //You can change this to the IP address or name of the target machine
+var startPort int
+var endPort int
 
-	var startPort int
-	var endPort int
-
+func PortRange() {
 	fmt.Print("Enter startPort: ")
 	fmt.Scanln(&startPort)
 
 	fmt.Print("Enter endPort: ")
 	fmt.Scanln(&endPort)
+}
+
+func FindOpenPort() {
+	target := "localhost" //You can change this to the IP address or name of the target machine
 
 	foundOpenPort := false
 
@@ -39,4 +41,9 @@ func main() {
 	if !foundOpenPort {
 		fmt.Println("No open ports found")
 	}
+}
+
+func main() {
+	PortRange()
+	FindOpenPort()
 }
