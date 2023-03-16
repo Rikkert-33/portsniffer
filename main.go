@@ -8,10 +8,13 @@ import (
 
 var startPort int
 var endPort int
+var openports []int
 
 func main() {
 	PortRange()
 	FindOpenPort()
+	fmt.Println("Open ports: ", openports)
+
 }
 
 func PortRange() {
@@ -20,6 +23,14 @@ func PortRange() {
 
 	fmt.Print("Enter endPort: ")
 	fmt.Scanln(&endPort)
+
+	//portrange error handlers
+	if startPort > endPort {
+		fmt.Println("Start port must be less than end port")
+	}
+	if startPort < 0 || endPort < 0 {
+		fmt.Println("Port numbers must be positive")
+	}
 }
 
 func FindOpenPort() {
@@ -39,11 +50,11 @@ func FindOpenPort() {
 		}
 
 		conn.Close()
-		fmt.Printf("%d open\n", i)
 		foundOpenPort = true
+		openports = append(openports, i)
 	}
 
 	if !foundOpenPort {
-		fmt.Println("No open ports found")
+		fmt.Println("No open ports found. Try a different port range.")
 	}
 }
