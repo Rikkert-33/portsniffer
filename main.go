@@ -9,6 +9,11 @@ import (
 var startPort int
 var endPort int
 
+func main() {
+	PortRange()
+	FindOpenPort()
+}
+
 func PortRange() {
 	fmt.Print("Enter startPort: ")
 	fmt.Scanln(&startPort)
@@ -41,9 +46,4 @@ func FindOpenPort() {
 	if !foundOpenPort {
 		fmt.Println("No open ports found")
 	}
-}
-
-func main() {
-	PortRange()
-	FindOpenPort()
 }
