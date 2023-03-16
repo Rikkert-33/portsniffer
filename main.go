@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net"
 	"time"
 )
@@ -10,8 +12,30 @@ var startPort int
 var endPort int
 var openports []int
 var prError bool
+var target string
+
+type Config struct {
+	StartPort int `json:"startport"`
+	EndPort   int `json:"endport"`
+}
 
 func main() {
+	//Read the config file
+	data, err := ioutil.ReadFile("config.json")
+	if err != nil {
+		panic(err)
+	}
+
+	var config Config
+	err = json.Unmarshal(data, &config)
+	if err != nil {
+		panic(err)
+	}
+
+	startPort = config.StartPort
+	endPort = config.EndPort
+	// target = config.Target
+
 	PortRange()
 
 	//If there is an error in the port range, don't run the FindOpenPort function
@@ -22,10 +46,10 @@ func main() {
 }
 
 func PortRange() {
-	fmt.Print("Enter startPort: ")
+	fmt.Print("Enter startPort or press enter for default: ")
 	fmt.Scanln(&startPort)
 
-	fmt.Print("Enter endPort: ")
+	fmt.Print("Enter endPort or press enter for default: ")
 	fmt.Scanln(&endPort)
 
 	//portrange error handlers
@@ -45,7 +69,10 @@ func PortRange() {
 }
 
 func FindOpenPort() {
-	target := "localhost" //You can change this to the IP address or name of the target machine
+	// target = config.Target
+	// fmt.Print("Enter target IP or press enter for default: ")
+	// fmt.Scanln(&target)
+	target = "localhost" //You can change this to the IP address or name of the target machine
 
 	foundOpenPort := false
 
