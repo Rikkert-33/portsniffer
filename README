@@ -1,2 +1,2 @@
-First enter startport, then endport, to configure your search ratio.
+First enter startport, then endport, to configure your search ratio. For standard start- and endport, press enter when this is asked.
 Standard target is set to "localhost". You can change this in FindOpenPort func (target).
