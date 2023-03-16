@@ -2,17 +2,18 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net"
 	"os"
 	"time"
 )
 
-var startPort int
-var endPort int
-var openports []int
-var prError bool
-var target string
+// var startPort int
+// var endPort int
+// var openports []int
+// var prError bool
+// var target string
 
 type Config struct {
 	Target    string `json:"target"`
@@ -30,49 +31,54 @@ func main() {
 	var config Config
 	err = json.Unmarshal(data, &config)
 	if err != nil {
-		panic(err)
+		fmt.Println("Error reading config file:", err)
+		os.Exit(1)
 	}
 
-	startPort = config.StartPort
-	endPort = config.EndPort
-	target = config.Target
-
-	PortRange()
-
-	//If there is an error in the port range, don't run the FindOpenPort function
-	if !prError {
-		FindOpenPort()
-		fmt.Println("Open ports: ", openports)
-	}
-}
-
-func PortRange() {
+	// Prompt the user for start and end ports
+	var startPort, endPort int
 	fmt.Print("Enter startPort or press enter for default: ")
-	fmt.Scanln(&startPort)
+	_, err = fmt.Scanln(&startPort)
+	if err != nil {
+		startPort = config.StartPort
+	}
 
 	fmt.Print("Enter endPort or press enter for default: ")
-	fmt.Scanln(&endPort)
+	_, err = fmt.Scanln(&endPort)
+	if err != nil {
+		endPort = config.EndPort
+	}
 
-	//portrange error handlers
-	prError = false
-	if startPort > endPort {
-		fmt.Println("Start port must be less than end port")
-		prError = true
+	err = PortValidation(startPort, endPort)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
 	}
-	if startPort < 0 || endPort < 0 {
-		fmt.Println("Port numbers must be positive")
-		prError = true
+
+	// Scan for open ports
+	openports, err := FindOpenPort(config.Target, startPort, endPort)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
 	}
-	if startPort > 65535 || endPort > 65535 {
-		fmt.Println("Port numbers must be less than 65535")
-		prError = true
-	}
+	fmt.Println("Open ports:", openports)
 }
 
-func FindOpenPort() {
-	fmt.Print("Enter target IP or press enter for default: ")
-	fmt.Scanln(&target)
+func PortValidation(startPort, endPort int) error {
+	if startPort > endPort {
+		return errors.New("start port must be less than end port")
+	}
+	if startPort < 0 || endPort < 0 {
+		return errors.New("port numbers must be positive")
+	}
+	if startPort > 65535 || endPort > 65535 {
+		return errors.New("port numbers must be less than 65535")
+	}
+	return nil
+}
 
+func FindOpenPort(target string, startPort, endPort int) ([]int, error) {
+	var openports []int
 	foundOpenPort := false
 
 	for i := startPort; i <= endPort; i++ {
@@ -92,6 +98,7 @@ func FindOpenPort() {
 	}
 
 	if !foundOpenPort {
-		fmt.Println("No open ports found. Try a different port range.")
+		return nil, errors.New("no open ports found. Try a different port range")
 	}
+	return openports, nil
 }
