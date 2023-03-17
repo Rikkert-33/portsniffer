@@ -9,12 +9,6 @@ import (
 	"time"
 )
 
-// var startPort int
-// var endPort int
-// var openports []int
-// var prError bool
-// var target string
-
 type Config struct {
 	Target    string `json:"target"`
 	StartPort int    `json:"startport"`
@@ -37,6 +31,7 @@ func main() {
 
 	// Prompt the user for start and end ports
 	var startPort, endPort int
+	var target string
 	fmt.Print("Enter startPort or press enter for default: ")
 	_, err = fmt.Scanln(&startPort)
 	if err != nil {
@@ -47,6 +42,12 @@ func main() {
 	_, err = fmt.Scanln(&endPort)
 	if err != nil {
 		endPort = config.EndPort
+	}
+
+	fmt.Print("Enter target or press enter for default: ")
+	_, err = fmt.Scanln(&target)
+	if err != nil {
+		target = config.Target
 	}
 
 	err = PortValidation(startPort, endPort)

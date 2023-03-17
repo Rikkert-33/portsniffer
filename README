@@ -1,4 +1,4 @@
-First enter startport, then endport, then target, to configure your search ratio. 
+First enter startport, then endport, then target, to configure your search ratio and target. 
 
-For default start- and endport, press enter when this is asked.
+For default start, endport and target, press enter when this is asked.
 Standard target is set to "localhost".
